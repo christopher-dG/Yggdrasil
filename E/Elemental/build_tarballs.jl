@@ -28,9 +28,10 @@ cmake \
   -DCMAKE_INSTALL_PREFIX="$prefix" \
   -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TARGET_TOOLCHAIN" \
   -DCMAKE_BUILD_TYPE="Release" \
-  -DEL_DISABLE_PARMETIS="ON" \
   -DMETIS_TEST_RUNS_EXITCODE="0" \
   -DMETIS_TEST_RUNS_EXITCODE__TRYRUN_OUTPUT="" \
+  -DPARMETIS_TEST_RUNS_EXITCODE="0" \
+  -DPARMETIS_TEST_RUNS_EXITCODE__TRYRUN_OUTPUT="" \
   -DMATH_LIBS="$BLAS_LAPACK_LIB" \
   -DBLAS_LIBRARIES="$BLAS_LAPACK_LIB" \
   -DLAPACK_LIBRARIES="$BLAS_LAPACK_LIB" \
@@ -56,9 +57,10 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    Dependency("METIS_jll"),
+    # Dependency("METIS_jll"),
     Dependency("MPICH_jll"),
     Dependency("OpenBLAS_jll"),
+    # Dependency("PARMETIS_jll"),
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.

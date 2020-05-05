@@ -37,6 +37,9 @@ elif [[ "${target}" == powerpc64le-* ]]; then
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} -lgomp -ldl -lm -lpthread"
 fi
 
+# Move the double-precision SuperLU_MT library into its correct place
+cp "$libdir/libsuperlumtd.$dlext" "$libdir/libsuperlu_mt_OPENMP.$dlext"
+
 # Build
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=${prefix} \

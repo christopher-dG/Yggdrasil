@@ -23,13 +23,15 @@ elif [[ "${target}" == powerpc64le-* ]]; then
     export CFLAGS="-Wl,-rpath-link,/opt/${target}/${target}/lib64"
 fi
 
-# Set up LAPACK
+# Set up LAPACK and SuperLU_MT dependencies
 LAPACK_LIBRARIES="-lgfortran"
 if [[ ${nbits} == 64 ]] && [[ ${target} != aarch64* ]]; then
     atomic_patch -p1 $WORKSPACE/srcdir/patches/Sundials_Fortran.patch
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} ${libdir}/libopenblas64_.${dlext}"
+    SUPERLUMT_BLAS="$libdir/libopenblas64_.$dlext"
 else
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} ${libdir}/libopenblas.${dlext}"
+    SUPERLUMT_BLAS="$libdir/libopenblas.$dlext"
 fi
 if [[ "${target}" == i686-* ]] || [[ "${target}" == x86_64-* ]]; then
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} -lquadmath"
@@ -44,6 +46,11 @@ cmake -DCMAKE_INSTALL_PREFIX=${prefix} \
     -DCMAKE_TOOLCHAIN_FILE="${CMAKE_TARGET_TOOLCHAIN}" \
     -DEXAMPLES_ENABLE_C=OFF \
     -DKLU_ENABLE=ON -DKLU_INCLUDE_DIR="$prefix/include" -DKLU_LIBRARY_DIR="$libdir" \
+    -DSUPERLUMT_ENABLE=ON \
+    -DSUPERLUMT_INCLUDE_DIR="$prefix/include" \
+    -DSUPERLUMT_LIBRARY_DIR="$libdir" \
+    -DSUPERLUMT_LIBRARIES="$SUPERLUMT_BLAS" \
+    -DSUPERLUMT_THREAD_TYPE=openmp \
     -DLAPACK_ENABLE=ON -DLAPACK_LIBRARIES:STRING="${LAPACK_LIBRARIES}" \
     ..
 make -j${nproc}
@@ -72,6 +79,7 @@ products = [
     LibraryProduct("libsundials_sunlinsolband", :libsundials_sunlinsolband),
     LibraryProduct("libsundials_sunlinsoldense", :libsundials_sunlinsoldense),
     LibraryProduct("libsundials_sunlinsolklu", :libsundials_sunlinsolklu),
+    LibraryProduct("libsundials_sunlinsolsuperlumt", :libsundials_sunlinsolsuperlumt),
     LibraryProduct("libsundials_sunlinsollapackband", :libsundials_sunlinsollapackband),
     LibraryProduct("libsundials_sunlinsollapackdense", :libsundials_sunlinsollapackdense),
     LibraryProduct("libsundials_sunlinsolpcg", :libsundials_sunlinsolpcg),
@@ -89,6 +97,7 @@ products = [
 dependencies = [
     Dependency("OpenBLAS_jll"),
     Dependency("SuiteSparse_jll"),
+    Dependency("SuperLU_MT_jll"),
 #    Dependency("CompilerSupportLibraries_jll"),
 ]
 

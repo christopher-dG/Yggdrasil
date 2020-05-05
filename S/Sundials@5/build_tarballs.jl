@@ -23,15 +23,13 @@ elif [[ "${target}" == powerpc64le-* ]]; then
     export CFLAGS="-Wl,-rpath-link,/opt/${target}/${target}/lib64"
 fi
 
-# Set up LAPACK and SuperLU_MT dependencies
+# Set up LAPACK
 LAPACK_LIBRARIES="-lgfortran"
 if [[ ${nbits} == 64 ]] && [[ ${target} != aarch64* ]]; then
     atomic_patch -p1 $WORKSPACE/srcdir/patches/Sundials_Fortran.patch
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} ${libdir}/libopenblas64_.${dlext}"
-    SUPERLUMT_BLAS="$libdir/libopenblas64_.$dlext"
 else
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} ${libdir}/libopenblas.${dlext}"
-    SUPERLUMT_BLAS="$libdir/libopenblas.$dlext"
 fi
 if [[ "${target}" == i686-* ]] || [[ "${target}" == x86_64-* ]]; then
     LAPACK_LIBRARIES="${LAPACK_LIBRARIES} -lquadmath"
@@ -49,7 +47,7 @@ cmake -DCMAKE_INSTALL_PREFIX=${prefix} \
     -DSUPERLUMT_ENABLE=ON \
     -DSUPERLUMT_INCLUDE_DIR="$prefix/include" \
     -DSUPERLUMT_LIBRARY_DIR="$libdir" \
-    -DSUPERLUMT_LIBRARIES="$SUPERLUMT_BLAS" \
+    -DSUPERLUMT_LIBRARIES="$libdir/libopenblas.$dlext" \
     -DSUPERLUMT_THREAD_TYPE=openmp \
     -DLAPACK_ENABLE=ON -DLAPACK_LIBRARIES:STRING="${LAPACK_LIBRARIES}" \
     ..

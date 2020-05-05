@@ -94,10 +94,12 @@ products = [
     LibraryProduct("libsundials_sunnonlinsolnewton", :libsundials_sunnonlinsolnewton),
 ]
 
+using Pkg: PackageSpec
 dependencies = [
     Dependency("OpenBLAS_jll"),
     Dependency("SuiteSparse_jll"),
-    Dependency("SuperLU_MT_jll"),
+    # Dependency("SuperLU_MT_jll"),
+    Dependency(PackageSpec(; name="SuperLU_MT_jll", uuid="00982de7-9f76-5194-84e1-476c61fcc171", url="https://github.com/christopher-dG/SuperLU_MT_jll.jl")),
 #    Dependency("CompilerSupportLibraries_jll"),
 ]
 
